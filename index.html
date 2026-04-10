@@ -8,12 +8,12 @@
     <style>
         body { background-color: #0f172a; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .dot { height: 8px; width: 8px; background-color: #334155; border-radius: 50%; display: inline-block; }
-        /* La pista: el punto cambiará de color al pasar el ratón para recordarte que ahí hay algo... */
-        .secret-hint:hover { background-color: #3b82f6; cursor: help; }
+        .dot { height: 8px; width: 8px; background-color: #334155; border-radius: 50%; display: inline-block; transition: all 0.3s; }
+        .secret-hint:hover { background-color: #3b82f6; cursor: pointer; transform: scale(1.2); }
+        .copied-active { background-color: #10b981 !important; transform: scale(1.5); }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen text-slate-200">
+<body class="flex items-center justify-center min-h-screen text-slate-200 font-sans">
 
     <div class="max-w-md w-full p-8 glass rounded-3xl shadow-2xl text-center">
         <div class="mb-6 inline-flex p-4 rounded-full bg-blue-500/10 text-blue-400">
@@ -22,7 +22,7 @@
             </svg>
         </div>
 
-        <h1 class="text-2xl font-bold mb-2">Service Status</h1>
+        <h1 class="text-2xl font-bold mb-2 tracking-tight">Service Status</h1>
         <p class="text-slate-400 text-sm mb-8">All systems are operational and running on Cloudflare Edge Network.</p>
 
         <div class="space-y-4 text-left">
@@ -33,21 +33,54 @@
                 </span>
             </div>
             <div class="flex items-center justify-between p-3 rounded-xl bg-white/5">
-                <span class="text-sm font-medium">Uptime</span>
-                <span class="text-xs text-slate-400">99.98%</span>
+                <span class="text-sm font-medium">Uptime Ratio</span>
+                <span class="text-xs text-slate-400">99.99%</span>
             </div>
         </div>
 
-        <div class="mt-12 pt-6 border-t border-white/5 flex justify-center space-x-2">
-            <span class="dot"></span>
-            <span class="dot secret-hint" title="Format: /lista.m3u?token=..."></span>
-            <span class="dot"></span>
+        <div class="mt-12 pt-6 border-t border-white/5">
+            <div class="flex justify-center space-x-3 items-center">
+                <span class="dot"></span>
+                <button 
+                    id="copyBtn"
+                    onclick="copyToClipboard()" 
+                    class="dot secret-hint focus:outline-none"
+                    aria-label="Secret Tool"
+                ></button>
+                <span class="dot"></span>
+            </div>
+            <p id="copyStatus" class="text-[9px] text-slate-500 mt-2 opacity-0 transition-opacity duration-300">COPIADO AL PORTAPAPELES</p>
         </div>
         
         <p class="mt-4 text-[10px] text-slate-600 uppercase tracking-widest font-semibold">
-            v2.4.0-stable
+            v2.4.2-stable
         </p>
     </div>
+
+    <script>
+        function copyToClipboard() {
+            // Genera la URL actual + tu ruta
+            // Esto detecta si estás en localhost o en tu dominio final automáticamente
+            const url = window.location.origin + "/lista.m3u?token=TU_TOKEN_AQUI";
+            
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const status = document.getElementById('copyStatus');
+                
+                // Feedback visual: punto verde y mensaje
+                btn.classList.add('copied-active');
+                status.style.opacity = '1';
+                
+                // Resetear después de 2 segundos
+                setTimeout(() => {
+                    btn.classList.remove('copied-active');
+                    status.style.opacity = '0';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+    </script>
 
 </body>
 </html>
