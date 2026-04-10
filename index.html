@@ -61,7 +61,7 @@
         function copyToClipboard() {
             // Genera la URL actual + tu ruta
             // Esto detecta si estás en localhost o en tu dominio final automáticamente
-            const url = window.location.origin + "/lista.m3u?token=TU_TOKEN_AQUI";
+            const url = window.location.origin + "/lista.m3u?token=";
             
             navigator.clipboard.writeText(url).then(() => {
                 const btn = document.getElementById('copyBtn');
