@@ -6,7 +6,13 @@ async function fetchFirstOk(urls, timeoutMs) {
     try {
       const r = await fetch(u, { signal: controller.signal });
       clearTimeout(t);
-      if (r.ok) return r;
+      //if (r.ok) return r;
+      if (r.ok) {
+        // --- AÑADE ESTA 2 LÍNEAS ---
+        const hostname = new URL(u).hostname;
+        console.log(`✅ ÉXITO: Descargado de ${hostname}`); 
+        return r;
+      }
       lastError = new Error(`Upstream HTTP ${r.status}`);
     } catch (e) {
       clearTimeout(t);
