@@ -8,12 +8,22 @@ async function fetchFirstOk(urls, timeoutMs) {
       clearTimeout(t);
       //if (r.ok) return r;
       if (r.ok) {
-        // --- AÑADE ESTA 2 LÍNEAS ---
-        const hostname = new URL(u).hostname;
-        console.log(`✅ ÉXITO: Descargado de ${hostname}`); 
-        return r;
+        // 1. Clonamos la respuesta para inspeccionarla sin consumir el body original
+        const text = await r.clone().text();
+
+        // 2. Verificamos que contenga etiquetas M3U (#EXTM3U, #EXTINF, etc.)
+        if (/#EXT/i.test(text)) {
+          const hostname = new URL(u).hostname;
+          console.log(`✅ ÉXITO: Descargado de ${hostname}`); 
+          return r; // Devuelve la Response original intacta
+        }
+
+        // Si no tiene #EXT, registramos el aviso y el bucle probará la siguiente URL
+        console.warn(`⚠️ HTTP 200 en ${u} pero NO contiene una lista M3U válida.`);
+        lastError = new Error(`Contenido no M3U devuelto por ${u}`);
+      } else {
+        lastError = new Error(`Upstream HTTP ${r.status}`);
       }
-      lastError = new Error(`Upstream HTTP ${r.status}`);
     } catch (e) {
       clearTimeout(t);
       lastError = e;
