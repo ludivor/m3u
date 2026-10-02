@@ -1,6 +1,10 @@
 async function fetchFirstOk(urls, timeoutMs) {
   let lastError = null;
   for (const u of urls) {
+      if (new URL(u).hostname.endsWith("onrender.com")) { //if para revisar url y esperar si concide
+      await fetch(u).catch(() => {});                   // ping para despertarlo
+      await new Promise((res) => setTimeout(res, 30000)); // espera 30 s
+      }
     const controller = new AbortController();
     const t = setTimeout(() => controller.abort("timeout"), timeoutMs);
     try {
