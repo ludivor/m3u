@@ -17,13 +17,6 @@ async function fetchFirstOk(urls, timeoutMs) {
           console.log(`✅ ÉXITO: Descargado de ${hostname}`); 
           return r; // Devuelve la Response original intacta
         }
-        console.warn(`⏳ ${u} respondió 200 sin M3U, esperando 20 s...`);
-        await new Promise((res) => setTimeout(res, 20000));
-        const r2 = await fetch(u);
-        if (r2.ok && /#EXT/i.test(await r2.clone().text())) {
-          console.log(`✅ ÉXITO tras esperar: ${new URL(u).hostname}`);
-          return r2;
-        }
         
         // Si no tiene #EXT, registramos el aviso y el bucle probará la siguiente URL
         console.warn(`⚠️ HTTP 200 en ${u} pero NO contiene una lista M3U válida.`);
