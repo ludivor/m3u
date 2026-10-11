@@ -89,7 +89,7 @@ const notfoundhtml = `<!DOCTYPE html>
     </svg>
     <h1>¡Ups! 404</h1>
     <p>Esta no es la página que estás buscando.</p>
-    <div class="badge">Ruta requerida: /lista.m3u</div>
+    <div class="badge">Ruta correcta requerida</div>
   </div>
 </body>
 </html>`;
