@@ -37,6 +37,62 @@ function setExtm3uEpg(m3uText, epgUrl) {
   if (/^\s*#EXTM3U.*$/mi.test(m3uText)) return m3uText.replace(/^\s*#EXTM3U.*$/mi, header);
   return header + "\n" + m3uText;
 }
+// página 404
+const notfoundhtml = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Nada por aquí</title>
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .card {
+      background: #1e293b;
+      padding: 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      max-width: 400px;
+    }
+    svg {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 1rem;
+    }
+    h1 { margin: 0; font-size: 2rem; color: #38bdf8; }
+    p { color: #94a3b8; font-size: 0.95rem; line-height: 1.5; }
+    .badge {
+      display: inline-block;
+      background: #334155;
+      color: #f1f5f9;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.3rem;
+      font-family: monospace;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- SVG del fantasma integrado directamente -->
+    <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 10h.01M15 10h.01M12 2a8 8 0 0 0-8 8v12l3-3 3 3 3-3 3 3 3-3 3 3V10a8 8 0 0 0-8-8z"/>
+    </svg>
+    <h1>¡Ups! 404</h1>
+    <p>Esta no es la página que estás buscando.</p>
+    <div class="badge">Ruta requerida: /lista.m3u</div>
+  </div>
+</body>
+</html>`;
 
 export default {
   async fetch(request, env) {
@@ -51,7 +107,10 @@ export default {
       if (env.TOKEN_LAN && token === env.TOKEN_LAN) profile = "lan";
       else if (env.TOKEN_ORACLE && token === env.TOKEN_ORACLE) profile = "oracle";
       else if (env.TOKEN_SS && token === env.TOKEN_SS) profile = "ssiptv";
-      else return new Response("Not found", { status: 404 });
+      else return new Response(notfoundhtml, {
+        status: 404,
+        headers: { "Content-Type": "text/html; charset=utf-8" }
+      });
 
       let baseMap = {};
       try { baseMap = JSON.parse(env.NEWBASE_MAP || "{}"); }
